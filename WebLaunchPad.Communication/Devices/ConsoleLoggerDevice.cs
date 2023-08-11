@@ -7,16 +7,25 @@ namespace WebLaunchPad.Communication.Devices;
 public class ConsoleLoggerDevice
     : IConcurrentDevice
 {
-    public Task WriteAsync(
+    private readonly SemaphoreSlim _lock;
+
+    public ConsoleLoggerDevice()
+    {
+        _lock = new SemaphoreSlim(1);
+    }
+
+    public async Task WriteAsync(
         IEnumerable<byte> bytes,
         CancellationToken cancellationToken
     )
     {
+        await _lock.WaitAsync(cancellationToken);
+
         foreach (var @byte in bytes)
         {
             Console.Write($"{@byte:X}, ");
         }
 
-        return Task.CompletedTask;
+        _lock.Release();
     }
 }
