@@ -5,11 +5,16 @@ namespace WebLaunchPad.Api.Controllers;
 public class LaunchpadColorController
     : ControllerBase
 {
-    private readonly IConcurrentDeviceController _deviceController;
+    private readonly IDeviceController _deviceController;
+    private readonly IConcurrencyService _concurrencyService;
 
-    public LaunchpadColorController(IConcurrentDeviceController deviceController)
+    public LaunchpadColorController(
+        IDeviceController deviceController,
+        IConcurrencyService concurrencyService
+    )
     {
         _deviceController = deviceController;
+        _concurrencyService = concurrencyService;
     }
 
     [HttpPost("{xIndex}/{yIndex}")]
@@ -20,26 +25,32 @@ public class LaunchpadColorController
         CancellationToken cancellationToken
     )
     {
-        await _deviceController.SetColorAsync(
-            xIndex,
-            yIndex,
-            color,
+        await _concurrencyService.RunAsync(
+            async () =>
+            {
+                _deviceController.SetColor(xIndex, yIndex, color);
+                await _deviceController.FlushAsync(cancellationToken);
+            },
             cancellationToken
         );
 
-        await _deviceController.FlushAsync(cancellationToken);
-
         return Ok();
     }
-    
+
     [HttpPost]
     public async Task<IActionResult> SetColorAsync(
         [FromBody] Color color,
         CancellationToken cancellationToken
     )
     {
-        await _deviceController.SetColorAsync(color, cancellationToken);
-        await _deviceController.FlushAsync(cancellationToken);
+        await _concurrencyService.RunAsync(
+            async () =>
+            {
+                _deviceController.SetColor(color);
+                await _deviceController.FlushAsync(cancellationToken);
+            },
+            cancellationToken
+        );
 
         return Ok();
     }

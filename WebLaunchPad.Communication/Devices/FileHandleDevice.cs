@@ -6,14 +6,14 @@ namespace WebLaunchPad.Communication.Devices;
 /// in my case).
 /// </summary>
 public class FileHandleDevice
-    : IConcurrentDevice
+    : IDevice
 {
-    private readonly string _unixPath;
+    private readonly string _filePath;
     private readonly SemaphoreSlim _lock;
 
-    public FileHandleDevice(string unixPath)
+    public FileHandleDevice(string filePath)
     {
-        _unixPath = unixPath;
+        _filePath = filePath;
         _lock = new SemaphoreSlim(1);
     }
 
@@ -22,10 +22,12 @@ public class FileHandleDevice
         CancellationToken cancellationToken
     )
     {
+        /* Locking shouldn't really be necessary (as it's handled by the API)
+         * but as we're writing to a real device, keep it for paranoia reasons */
         await _lock.WaitAsync(cancellationToken);
 
         await using var fileHandle = File.Open(
-            _unixPath,
+            _filePath,
             FileMode.Open,
             FileAccess.Write
         );

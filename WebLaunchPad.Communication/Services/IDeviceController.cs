@@ -1,14 +1,9 @@
 namespace WebLaunchPad.Communication.Services;
 
 /// <summary>
-/// Controls an <see cref="IConcurrentDevice"/> (by setting colors and
-/// flushing them). As the device will be controlled via WebApi, it must handle
-/// concurrent access.
-/// <remarks>
-/// FIXME: This seems to be the wrong place, maybe concurrent stuff should happen at api level?
-/// </remarks>
+/// Controls an <see cref="IDevice"/> (by setting colors and flushing them).
 /// </summary>
-public interface IConcurrentDeviceController
+public interface IDeviceController
 {
     /// <summary>
     /// Sets a given color for a given coordinate.
@@ -16,23 +11,15 @@ public interface IConcurrentDeviceController
     /// <remarks>
     /// No changes will be made to the device until flushing.
     /// </remarks>
-    public Task SetColorAsync(
-        uint xIndex,
-        uint yIndex,
-        Color color,
-        CancellationToken cancellationToken
-    );
-    
+    public void SetColor(uint xIndex, uint yIndex, Color color);
+
     /// <summary>
     /// Sets all fields of a device to given color
     /// </summary>
     /// <remarks>
     /// No changes will be made to the device until flushing.
     /// </remarks>
-    public Task SetColorAsync(
-        Color color,
-        CancellationToken cancellationToken
-    );
+    public void SetColor(Color color);
 
     /// <summary>
     /// Flushes all changes to the device.

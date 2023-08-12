@@ -5,22 +5,13 @@ namespace WebLaunchPad.Communication.Devices;
 /// Use for debugging purposes.
 /// </summary>
 public class FakeLaunchpadConsoleDevice
-    : IConcurrentDevice
+    : IDevice
 {
-    private readonly SemaphoreSlim _lock;
-
-    public FakeLaunchpadConsoleDevice()
-    {
-        _lock = new SemaphoreSlim(1);
-    }
-
-    public async Task WriteAsync(
+    public Task WriteAsync(
         IEnumerable<byte> bytes,
         CancellationToken cancellationToken
     )
     {
-        await _lock.WaitAsync(cancellationToken);
-
         foreach (var colorCommand in bytes.Chunk(12))
         {
             if (colorCommand.Length != 12)
@@ -43,6 +34,6 @@ public class FakeLaunchpadConsoleDevice
             Console.Write($"\x1B[H\x1B[{yIndex}B\x1B[{3 * (xIndex + 1)}C\x1B[38;2;{red};{green};{blue}m██ ");
         }
 
-        _lock.Release();
+        return Task.CompletedTask;
     }
 }
