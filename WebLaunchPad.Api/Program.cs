@@ -1,8 +1,7 @@
-using WebLaunchPad.Api.Services;
-
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
+builder.Services.AddScoped<IImageConverter, ImageConverter>();
 builder.Services.AddSingleton<IConcurrencyService>(_ => new ConcurrencyService());
 builder.Services.AddSingleton<IDeviceController>(_ =>
 {

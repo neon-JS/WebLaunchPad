@@ -29,11 +29,16 @@ public class LaunchpadDeviceController
 
         if (xIndex == 8 && yIndex == 8)
         {
-            throw new ArgumentOutOfRangeException(nameof(xIndex));
+            /* This pixel should exist but doesn't. Ignore it as otherwise you
+             * couldn't upload a gif to a Launchpad. */
+            return;
         }
 
-        var launchpadIndex = yIndex < 8
-            ? (yIndex + 1) * 10 + xIndex + 1
+        /* The launchpad index starts on the bottom left */
+        var invertedYIndex = 8 - yIndex;
+
+        var launchpadIndex = invertedYIndex < 8
+            ? (invertedYIndex + 1) * 10 + xIndex + 1
             : 104 + xIndex;
 
         _queue.AddRange(new byte[]
@@ -61,11 +66,6 @@ public class LaunchpadDeviceController
         {
             for (uint y = 0; y < 9; y++)
             {
-                if (x == 8 && y == 8)
-                {
-                    break;
-                }
-
                 SetColor(x, y, color);
             }
         }

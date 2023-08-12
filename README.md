@@ -14,8 +14,8 @@ Heavily WIP.
 - _WebLaunchPad.Communication_ handles the conversion from fancy DTOs
   to raw bytes which are then sent to the devices. It is only called by
   the API.
-- _WebLaunchPad.Images_ (**currently not existing**) will handle all the
-  image processing.
+- _WebLaunchPad.Images_ handles all the image processing. Uses 
+  [SkiaSharp](https://www.nuget.org/packages/SkiaSharp).
 
 ## Hosting
 This project is supposed to run on a spare Raspberry Pi so it will be limited
