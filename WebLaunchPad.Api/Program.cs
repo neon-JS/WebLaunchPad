@@ -1,52 +1,28 @@
-using WebLaunchPad.Communication.Devices;
-using WebLaunchPad.Communication.Models;
-using WebLaunchPad.Communication.Services;
+var builder = WebApplication.CreateBuilder(args);
 
-var device = new FakeLaunchpadConsoleDevice();
-var service = new LaunchpadDeviceController(device);
-
-for (byte i = 0; i < 8; i++)
+builder.Services.AddControllers();
+builder.Services.AddSingleton<IConcurrentDeviceController>(_ =>
 {
-    for (byte j = 0; j < 8; j++)
-    {
-        var color = new Color((byte)(31 * i), (byte)(255 - 31 * j), (byte)(31 * j));
-        await service.SetColorAsync(i, j, color, CancellationToken.None);
+    var device = new FakeLaunchpadConsoleDevice();
+    return new LaunchpadDeviceController(device);
+});
 
-    }
+var app = builder.Build();
+
+if (app.Environment.IsDevelopment())
+{
 }
 
-await service.FlushAsync(CancellationToken.None);
+// app.UseHttpsRedirection();
+
+app.UsePathBase(new PathString("/api"));
+app.UseMiddleware<TaskCancellationMiddleware>();
+app.UseAuthorization();
+app.MapControllers();
+app.Run();
+
 
 for (var i = 0; i < 9; i++)
 {
     Console.WriteLine();
 }
-
-
-/*
-var builder = WebApplication.CreateBuilder(args);
-
-// Add services to the container.
-
-builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
-
-var app = builder.Build();
-
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
-
-app.UseHttpsRedirection();
-
-app.UseAuthorization();
-
-app.MapControllers();
-
-app.Run();
-*/

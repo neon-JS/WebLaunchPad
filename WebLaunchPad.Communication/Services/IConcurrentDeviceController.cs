@@ -22,6 +22,17 @@ public interface IConcurrentDeviceController
         Color color,
         CancellationToken cancellationToken
     );
+    
+    /// <summary>
+    /// Sets all fields of a device to given color
+    /// </summary>
+    /// <remarks>
+    /// No changes will be made to the device until flushing.
+    /// </remarks>
+    public Task SetColorAsync(
+        Color color,
+        CancellationToken cancellationToken
+    );
 
     /// <summary>
     /// Flushes all changes to the device.

@@ -35,6 +35,11 @@ public class LaunchpadDeviceController
             throw new ArgumentOutOfRangeException(nameof(yIndex));
         }
 
+        if (xIndex == 8 && yIndex == 8)
+        {
+            throw new ArgumentOutOfRangeException(nameof(xIndex));
+        }
+
         var launchpadIndex = yIndex < 8
             ? (yIndex + 1) * 10 + xIndex + 1
             : 104 + xIndex;
@@ -64,13 +69,36 @@ public class LaunchpadDeviceController
         _lock.Release();
     }
 
+    public async Task SetColorAsync(
+        Color color, 
+        CancellationToken cancellationToken
+    )
+    {
+        /* Launchpad does not support setting all colors in RGB mode. Therefore
+         * we must set each field manually. We also must not lock as this is
+         * done by the other SetColorAsync variant. */
+        for (uint x = 0; x < 9; x++)
+        {
+            for (uint y = 0; y < 9; y++)
+            {
+                if (x == 8 && y == 8)
+                {
+                    break;
+                }
+
+                await SetColorAsync(x, y, color, cancellationToken);
+            }
+        }
+    }
+
     public async Task FlushAsync(CancellationToken cancellationToken)
     {
         await _lock.WaitAsync(cancellationToken);
 
         /* As the queue is locked on all read/write operations, we can safely
-         * write & clear it afterwards. */
-        await _launchpad.WriteAsync(_queue, cancellationToken);
+         * write & clear it afterwards. But we don't pass the cancellationToken
+         * as on cancellation the lock wouldn't be released.*/
+        await _launchpad.WriteAsync(_queue, CancellationToken.None);
         _queue.Clear();
 
         _lock.Release();

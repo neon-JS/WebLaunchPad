@@ -38,7 +38,7 @@ public class FakeLaunchpadConsoleDevice
 
             /* \x1B[H                          - reset cursor to top left
              * \x1B[<ROWS>B                    - go <ROWS> down
-             * \x1B[<COLUMNS>C                 - go columns right
+             * \x1B[<COLUMNS>C                 - go <COLUMNS> right
              * \x1B[38;2;<RED>;<GREEN>;<BLUE>m - set text color */
             Console.Write($"\x1B[H\x1B[{yIndex}B\x1B[{3 * (xIndex + 1)}C\x1B[38;2;{red};{green};{blue}m██ ");
         }
