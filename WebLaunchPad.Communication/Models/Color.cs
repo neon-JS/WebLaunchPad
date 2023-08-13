@@ -12,4 +12,9 @@ public class Color
         Green = green;
         Blue = blue;
     }
+
+    public int GetAsRgb()
+    {
+        return Red * 0x10000 + Green * 0x100 + Blue;
+    }
 }

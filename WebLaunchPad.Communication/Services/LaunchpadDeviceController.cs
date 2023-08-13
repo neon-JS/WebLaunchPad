@@ -8,11 +8,13 @@ public class LaunchpadDeviceController
 {
     private readonly IDevice _launchpad;
     private readonly List<byte> _queue;
+    private readonly IDictionary<uint, int> _colorMappingCache;
 
     public LaunchpadDeviceController(IDevice launchpad)
     {
         _launchpad = launchpad;
         _queue = new List<byte>();
+        _colorMappingCache = new Dictionary<uint, int>();
     }
 
     public void SetColor(uint xIndex, uint yIndex, Color color)
@@ -40,6 +42,11 @@ public class LaunchpadDeviceController
         var launchpadIndex = invertedYIndex < 8
             ? (invertedYIndex + 1) * 10 + xIndex + 1
             : 104 + xIndex;
+
+        if (IsColorCached(launchpadIndex, color))
+        {
+            return;
+        }
 
         _queue.AddRange(new byte[]
         {
@@ -75,5 +82,28 @@ public class LaunchpadDeviceController
     {
         await _launchpad.WriteAsync(_queue, CancellationToken.None);
         _queue.Clear();
+    }
+
+    private bool IsColorCached(uint launchpadIndex, Color color)
+    {
+        var cacheValueExists = _colorMappingCache.TryGetValue(
+            launchpadIndex,
+            out var cachedRgbValue
+        );
+        var newRgbValue = color.GetAsRgb();
+
+        if (!cacheValueExists)
+        {
+            _colorMappingCache.Add(launchpadIndex, newRgbValue);
+            return false;
+        }
+
+        if (cachedRgbValue == newRgbValue)
+        {
+            return true;
+        }
+
+        _colorMappingCache[launchpadIndex] = newRgbValue;
+        return false;
     }
 }
