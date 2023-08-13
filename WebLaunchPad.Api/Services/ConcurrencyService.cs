@@ -3,27 +3,33 @@ namespace WebLaunchPad.Api.Services;
 public class ConcurrencyService
     : IConcurrencyService
 {
-    private readonly SemaphoreSlim _lock;
-
-    public ConcurrencyService()
-    {
-        _lock = new SemaphoreSlim(1);
-    }
+    private readonly SemaphoreSlim _lock = new(1);
+    private CancellationTokenSource? _cancellationTokenSource;
 
     public async Task RunAsync(
-        Func<Task> func,
+        Func<CancellationToken, Task> func,
         CancellationToken cancellationToken
     )
     {
+        _cancellationTokenSource?.Cancel();
         await _lock.WaitAsync(cancellationToken);
+        _cancellationTokenSource = new CancellationTokenSource();
 
-        try
-        {
-            await func();
-        }
-        finally
-        {
-            _lock.Release();
-        }
+#pragma warning disable CS4014
+        Task.Run(
+            async () =>
+            {
+                try
+                {
+                    await func(_cancellationTokenSource.Token);
+                }
+                finally
+                {
+                    _lock.Release();
+                }
+            },
+            CancellationToken.None
+        );
+#pragma warning restore CS4014
     }
 }

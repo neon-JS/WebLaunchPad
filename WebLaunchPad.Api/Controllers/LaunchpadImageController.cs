@@ -60,14 +60,14 @@ public class LaunchpadImageController
         );
 
         await _concurrencyService.RunAsync(
-            async () =>
+            async taskCancellationToken =>
             {
                 foreach (var ((xIndex, yIndex), color) in pixels)
                 {
                     _deviceController.SetColor(xIndex, yIndex, color);
                 }
 
-                await _deviceController.FlushAsync(cancellationToken);
+                await _deviceController.FlushAsync(taskCancellationToken);
             },
             cancellationToken
         );

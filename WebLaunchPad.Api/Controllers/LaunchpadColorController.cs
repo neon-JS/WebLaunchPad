@@ -26,10 +26,10 @@ public class LaunchpadColorController
     )
     {
         await _concurrencyService.RunAsync(
-            async () =>
+            async taskCancellationToken =>
             {
                 _deviceController.SetColor(xIndex, yIndex, color);
-                await _deviceController.FlushAsync(cancellationToken);
+                await _deviceController.FlushAsync(taskCancellationToken);
             },
             cancellationToken
         );
@@ -44,10 +44,10 @@ public class LaunchpadColorController
     )
     {
         await _concurrencyService.RunAsync(
-            async () =>
+            async taskCancellationToken =>
             {
                 _deviceController.SetColor(color);
-                await _deviceController.FlushAsync(cancellationToken);
+                await _deviceController.FlushAsync(taskCancellationToken);
             },
             cancellationToken
         );
