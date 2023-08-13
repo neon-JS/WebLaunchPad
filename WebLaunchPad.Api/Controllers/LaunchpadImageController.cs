@@ -14,17 +14,17 @@ public class LaunchpadImageController
         "GIF89a"u8.ToArray(),
     };
 
-    private readonly IImageConverter _imageConverter;
+    private readonly IGifConverter _gifConverter;
     private readonly IConcurrencyService _concurrencyService;
     private readonly IDeviceController _deviceController;
 
     public LaunchpadImageController(
-        IImageConverter imageConverter,
+        IGifConverter gifConverter,
         IConcurrencyService concurrencyService,
         IDeviceController deviceController
     )
     {
-        _imageConverter = imageConverter;
+        _gifConverter = gifConverter;
         _concurrencyService = concurrencyService;
         _deviceController = deviceController;
     }
@@ -54,7 +54,7 @@ public class LaunchpadImageController
             return BadRequest();
         }
 
-        var pixels = await _imageConverter.GetPixelMappingAsync(
+        var frames = await _gifConverter.GetFramesAsync(
             content,
             cancellationToken
         );
@@ -62,12 +62,28 @@ public class LaunchpadImageController
         await _concurrencyService.RunAsync(
             async taskCancellationToken =>
             {
-                foreach (var ((xIndex, yIndex), color) in pixels)
+                foreach (var frame in frames.ToList().RepeatForever())
                 {
-                    _deviceController.SetColor(xIndex, yIndex, color);
-                }
+                    if (taskCancellationToken.IsCancellationRequested)
+                    {
+                        return;
+                    }
 
-                await _deviceController.FlushAsync(taskCancellationToken);
+                    foreach (var (position, color) in frame.Mapping)
+                    {
+                        _deviceController.SetColor(position.X,position.Y,color);
+                    }
+
+                    await _deviceController.FlushAsync(taskCancellationToken);
+
+                    if (frames.Count == 1)
+                    {
+                        /* no need to be called again. */
+                        return;
+                    }
+
+                    await Task.Delay(frame.DurationMs, taskCancellationToken);
+                }
             },
             cancellationToken
         );

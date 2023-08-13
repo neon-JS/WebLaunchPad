@@ -1,8 +1,8 @@
 namespace WebLaunchPad.Images.Services;
 
-public interface IImageConverter
+public interface IGifConverter
 {
-    Task<IDictionary<(uint, uint), Color>> GetPixelMappingAsync(
+    Task<ICollection<Frame>> GetFramesAsync(
         Stream fileStream,
         CancellationToken cancellationToken
     );
