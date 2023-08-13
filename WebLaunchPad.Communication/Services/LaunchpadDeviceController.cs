@@ -29,7 +29,7 @@ public class LaunchpadDeviceController
             throw new ArgumentOutOfRangeException(nameof(yIndex));
         }
 
-        if (xIndex == 8 && yIndex == 8)
+        if (xIndex == 8 && yIndex == 0)
         {
             /* This pixel should exist but doesn't. Ignore it as otherwise you
              * couldn't upload a gif to a Launchpad. */
