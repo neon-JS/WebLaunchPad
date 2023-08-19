@@ -16,6 +16,9 @@ Heavily WIP.
   the API.
 - _WebLaunchPad.Images_ handles all the image processing. Uses 
   [SkiaSharp](https://www.nuget.org/packages/SkiaSharp).
+- _gif\_helper_ is a simple script, written in Rust and therefore **not a part
+  of the .NET project**. It converts GIFs in a way that I can easily create
+  animations for the Launchpad without thinking about GIF frames.
 
 ## Hosting
 This project is supposed to run on a spare Raspberry Pi so it will be limited
