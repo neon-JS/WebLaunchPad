@@ -1,0 +1,7 @@
+[package]
+name = "gif_helper"
+version = "0.0.1"
+edition = "2021"
+
+[dependencies]
+gif = "0.12.0"
