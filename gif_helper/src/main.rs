@@ -14,29 +14,29 @@ fn main() {
             eprintln!("Missing paths.\nUsage: ./gif_helper <input file> <output file>");
             return;
         }
-        Some(path) => path
+        Some(paths) => paths
     };
 
     let input_file = match File::open(input_file_path) {
         Ok(f) => f,
-        Err(error) => {
-            eprintln!("Could not open input file.\nError: {}", error);
+        Err(e) => {
+            eprintln!("Could not open input file.\nError: {}", e);
             return;
         }
     };
 
     let mut output_file = match File::create(output_file_path) {
         Ok(f) => f,
-        Err(error) => {
-            eprintln!("Could not open output file.\nError: {}", error);
+        Err(e) => {
+            eprintln!("Could not open output file.\nError: {}", e);
             return;
         }
     };
 
     let (gif, palette) = match get_gif_frame_and_palette(&input_file) {
         Ok(f) => f,
-        Err(s) => {
-            eprintln!("Could not get GIF content.\nError: {}", s);
+        Err(e) => {
+            eprintln!("Could not get GIF content.\nError: {}", e);
             return;
         }
     };
@@ -76,8 +76,7 @@ fn main() {
     }
 }
 
-fn calculate_frame_by_offset<'a>(offset: usize, gif: &'a Frame<'a>) -> Frame<'a>
-{
+fn calculate_frame_by_offset<'a>(offset: usize, gif: &'a Frame<'a>) -> Frame<'a> {
     let mut frame_buffer: Vec<u8> = Vec::new();
 
     for y in 0..WIDTH {
@@ -142,6 +141,6 @@ fn get_gif_frame_and_palette(file: &File) -> Result<(Frame, Vec<u8>), GifHelperE
 
     match frame {
         None => Err(FrameNotExisting),
-        Some(x) => Ok((x.clone(), palette))
+        Some(f) => Ok((f.clone(), palette))
     }
 }

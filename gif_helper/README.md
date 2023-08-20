@@ -13,5 +13,9 @@ The resulting gif can be sent to the Launchpad via API.
 # e.g. ./gif_helper ../my_large.gif framed.gif
 ```
 
-## Releases
-No such thing as releases. But for convenience, there are prebuilt binaries in the _out/_ folder.
+## Docker
+```bash
+docker pull ghcr.io/neon-js/gif_helper:main
+docker run -v $(pwd):/gifs ghcr.io/neon-js/gif_helper:main gif_helper /gifs/<input file> /gifs/<output file>
+# e.g. docker run -v $(pwd):/gifs ghcr.io/neon-js/gif_helper:main gif_helper /gifs/my_large.gif /gifs/framed.gif
+```
