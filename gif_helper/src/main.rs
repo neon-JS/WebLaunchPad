@@ -5,6 +5,8 @@ use gif::{DecodeOptions, ColorOutput, Frame, Encoder, Repeat};
 use crate::errors::GifHelperError;
 use crate::errors::GifHelperError::{FrameNotExisting, FrameNotReadable, InfoNotReadable, PaletteNotExisting};
 
+/* First row of Launchpad should not be used. Therefore always add a black row for each frame. */
+const HEIGHT_OFFSET: usize = 1;
 const HEIGHT: usize = 8;
 const WIDTH: usize = 8;
 
@@ -79,8 +81,17 @@ fn main() {
 fn calculate_frame_by_offset<'a>(offset: usize, gif: &'a Frame<'a>) -> Frame<'a> {
     let mut frame_buffer: Vec<u8> = Vec::new();
 
-    for y in 0..WIDTH {
-        for x in 0..HEIGHT {
+    for _ in 0..HEIGHT_OFFSET {
+        for _ in 0..WIDTH {
+            for _ in 0..3 {
+                frame_buffer.push(0);
+            }
+            frame_buffer.push(255);
+        }
+    }
+
+    for y in 0..HEIGHT {
+        for x in 0..WIDTH {
             let pixel_index = x + offset + (y * (gif.width as usize));
             for byte in 0..4 {
                 let buffer_index = pixel_index * 4 + byte;
@@ -91,7 +102,7 @@ fn calculate_frame_by_offset<'a>(offset: usize, gif: &'a Frame<'a>) -> Frame<'a>
 
     let mut frame = Frame::from_rgba(
         WIDTH as u16,
-        HEIGHT as u16,
+        (HEIGHT + HEIGHT_OFFSET) as u16,
         frame_buffer.as_mut_slice(),
     );
     frame.delay = 100;

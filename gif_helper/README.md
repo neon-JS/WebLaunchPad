@@ -1,11 +1,11 @@
 # gif_helper
 
 ## About
-Converts a landscape GIF into an _8px * 8px_ framed GIF. Starts with the first _8px * 8px_ and
-moves _1px_ to the right for each new frame.
-This can be used to create e.g. color gradient effects without having to create a bunch of
-frames. Instead you can create one wide (_8px * \_\_\_px_) file and use this tool.
+Converts a landscape GIF into an _8px * 8px_ framed GIF (_9px * 8px_ to be exact but the top row will always be black).
 The resulting gif can be sent to the Launchpad via API.
+Starts with the first _8px * 8px_ and moves _1px_ to the right for each new frame.
+This can be used to create e.g. color gradient effects without having to create a bunch of frames.
+Instead you can create one wide (_9px * \_\_\_px_) file and use this tool.
 
 ## Usage
 ```bash
