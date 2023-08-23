@@ -14,7 +14,7 @@
 
     <ItemGroup>
       <PackageReference Include="SkiaSharp" Version="2.88.4" />
-      <PackageReference Include="SkiaSharp.NativeAssets.Linux.NoDependencies" Version="2.88.3" />
+      <PackageReference Include="SkiaSharp.NativeAssets.Linux.NoDependencies" Version="2.88.4" />
     </ItemGroup>
 
 </Project>
