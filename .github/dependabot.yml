@@ -9,3 +9,7 @@ updates:
     directory: "/" # Location of package manifests
     schedule:
       interval: "daily"
+  - package-ecosystem: "cargo"
+    directory: "/gif_helper"
+    schedule:
+      interval: "daily"
