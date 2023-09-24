@@ -1,4 +1,4 @@
-name: Docker Publish gif_helper
+name: Docker Publish WebLaunchPad
 
 # This workflow uses actions that are not certified by GitHub.
 # They are provided by a third-party and are governed by
@@ -17,7 +17,7 @@ env:
   # Use docker.io for Docker Hub if empty
   REGISTRY: ghcr.io
   # github.repository as <account>/<repo>
-  IMAGE_NAME: neon-js/gif_helper
+  IMAGE_NAME: neon-js/WebLaunchPad
 
 jobs:
   build:
@@ -30,7 +30,7 @@ jobs:
       id-token: write
     defaults:
       run:
-        working-directory: gif_helper
+        working-directory: .
 
     steps:
       - name: Checkout repository
