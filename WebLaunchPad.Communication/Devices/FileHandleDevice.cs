@@ -18,10 +18,15 @@ public class FileHandleDevice
     }
 
     public async Task WriteAsync(
-        IEnumerable<byte> bytes,
+        ICollection<byte> bytes,
         CancellationToken cancellationToken
     )
     {
+        if (!bytes.Any())
+        {
+            return;
+        }
+        
         /* Locking shouldn't really be necessary (as it's handled by the API)
          * but as we're writing to a real device, keep it for paranoia reasons */
         await _lock.WaitAsync(cancellationToken);

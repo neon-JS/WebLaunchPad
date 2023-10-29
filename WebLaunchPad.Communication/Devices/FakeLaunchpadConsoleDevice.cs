@@ -8,7 +8,7 @@ public class FakeLaunchpadConsoleDevice
     : IDevice
 {
     public Task WriteAsync(
-        IEnumerable<byte> bytes,
+        ICollection<byte> bytes,
         CancellationToken cancellationToken
     )
     {

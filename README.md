@@ -19,6 +19,8 @@ Heavily WIP.
 - _gif\_helper_ is a simple script, written in Rust and therefore **not a part
   of the .NET project**. It converts GIFs in a way that I can easily create
   animations for the Launchpad without thinking about GIF frames.
+- _fake\_midi\_socket_ is a small program that allows working with the Launchpad
+  on e.g. macOS. It's not for production use so you may ignore it.
 
 ## Hosting
 This project is supposed to run on a spare Raspberry Pi so it will be limited
