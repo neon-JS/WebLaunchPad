@@ -1,4 +1,5 @@
-﻿FROM mcr.microsoft.com/dotnet/aspnet:7.0 AS base
+﻿# Note that this doesn't currently work as the docker container can't write data to the file handle of the host system.
+FROM mcr.microsoft.com/dotnet/aspnet:7.0 AS base
 WORKDIR /app
 EXPOSE 80
 

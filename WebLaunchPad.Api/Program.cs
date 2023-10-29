@@ -8,9 +8,11 @@ builder.Services.AddSingleton<IDeviceController>(_ =>
 {
     var devicePath = builder.Configuration.GetValue<string>("LaunchpadPath");
 
-    if (builder.Environment.IsDevelopment() && string.IsNullOrWhiteSpace(devicePath))
+    if (builder.Environment.IsDevelopment())
     {
-        return new LaunchpadDeviceController(new FakeLaunchpadConsoleDevice());
+        return string.IsNullOrWhiteSpace(devicePath) 
+            ? new LaunchpadDeviceController(new FakeLaunchpadConsoleDevice()) 
+            : new LaunchpadDeviceController(new SocketDevice(devicePath));
     }
 
     if (string.IsNullOrWhiteSpace(devicePath))
