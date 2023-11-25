@@ -42,10 +42,7 @@ public class LaunchpadImageController(
             return BadRequest();
         }
 
-        var frames = await gifConverter.GetFramesAsync(
-            content,
-            cancellationToken
-        );
+        var frames = gifConverter.GetFrames(content);
 
         await concurrencyService.RunAsync(
             async taskCancellationToken =>
@@ -62,7 +59,7 @@ public class LaunchpadImageController(
                         deviceController.SetColor(position.X, position.Y, color);
                     }
 
-                    await deviceController.FlushAsync(taskCancellationToken);
+                    await deviceController.FlushAsync();
 
                     if (frames.Count == 1)
                     {

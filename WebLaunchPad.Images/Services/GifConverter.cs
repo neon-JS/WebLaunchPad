@@ -3,10 +3,7 @@ namespace WebLaunchPad.Images.Services;
 public class GifConverter
     : IGifConverter
 {
-    public Task<ICollection<Frame>> GetFramesAsync(
-        Stream fileStream,
-        CancellationToken cancellationToken
-    )
+    public ICollection<Frame> GetFrames(Stream fileStream)
     {
         using var codec = SKCodec.Create(fileStream);
         var frames = new List<Frame>();
@@ -36,10 +33,10 @@ public class GifConverter
             );
         }
 
-        return Task.FromResult<ICollection<Frame>>(frames);
+        return frames;
     }
 
-    private static IDictionary<Frame.Coordinate, Color>
+    public static IDictionary<Frame.Coordinate, Color>
         ConvertBitmapPixelsToMapping(SKBitmap bitmap)
     {
         return bitmap.Pixels

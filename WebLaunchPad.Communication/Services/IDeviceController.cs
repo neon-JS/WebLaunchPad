@@ -24,5 +24,5 @@ public interface IDeviceController
     /// <summary>
     /// Flushes all changes to the device.
     /// </summary>
-    public Task FlushAsync(CancellationToken cancellationToken);
+    public Task FlushAsync();
 }

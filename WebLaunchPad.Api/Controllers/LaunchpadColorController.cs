@@ -19,7 +19,7 @@ public class LaunchpadColorController(
             async taskCancellationToken =>
             {
                 deviceController.SetColor(xIndex, yIndex, color);
-                await deviceController.FlushAsync(taskCancellationToken);
+                await deviceController.FlushAsync();
             },
             cancellationToken
         );
@@ -37,7 +37,7 @@ public class LaunchpadColorController(
             async taskCancellationToken =>
             {
                 deviceController.SetColor(color);
-                await deviceController.FlushAsync(taskCancellationToken);
+                await deviceController.FlushAsync();
             },
             cancellationToken
         );

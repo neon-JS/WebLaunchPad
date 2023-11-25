@@ -63,7 +63,7 @@ public class LaunchpadDeviceController(IDevice launchpad) : IDeviceController
         }
     }
 
-    public async Task FlushAsync(CancellationToken cancellationToken)
+    public async Task FlushAsync()
     {
         await launchpad.WriteAsync(_queue, CancellationToken.None);
         _queue.Clear();
