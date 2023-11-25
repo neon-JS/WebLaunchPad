@@ -5,17 +5,9 @@ namespace WebLaunchPad.Communication.Devices;
 /// This works e.g. for Launchpads on linux systems (device is <i>/dev/midi3</i>
 /// in my case).
 /// </summary>
-public class FileHandleDevice
-    : IDevice
+public class FileHandleDevice(string filePath) : IDevice
 {
-    private readonly string _filePath;
-    private readonly SemaphoreSlim _lock;
-
-    public FileHandleDevice(string filePath)
-    {
-        _filePath = filePath;
-        _lock = new SemaphoreSlim(1);
-    }
+    private readonly SemaphoreSlim _lock = new(1);
 
     public async Task WriteAsync(
         ICollection<byte> bytes,
@@ -26,13 +18,13 @@ public class FileHandleDevice
         {
             return;
         }
-        
+
         /* Locking shouldn't really be necessary (as it's handled by the API)
          * but as we're writing to a real device, keep it for paranoia reasons */
         await _lock.WaitAsync(cancellationToken);
 
         await using var fileHandle = File.Open(
-            _filePath,
+            filePath,
             FileMode.Open,
             FileAccess.Write
         );

@@ -3,31 +3,16 @@ namespace WebLaunchPad.Communication.Services;
 /// <summary>
 /// Implementation of a <see cref="IDeviceController"/> for a Launchpad MK2
 /// </summary>
-public class LaunchpadDeviceController
-    : IDeviceController
+public class LaunchpadDeviceController(IDevice launchpad) : IDeviceController
 {
-    private readonly IDevice _launchpad;
-    private readonly List<byte> _queue;
-    private readonly IDictionary<uint, int> _colorMappingCache;
-
-    public LaunchpadDeviceController(IDevice launchpad)
-    {
-        _launchpad = launchpad;
-        _queue = new List<byte>();
-        _colorMappingCache = new Dictionary<uint, int>();
-    }
+    private readonly List<byte> _queue = new();
+    private readonly Dictionary<uint, int> _colorMappingCache = new();
 
     public void SetColor(uint xIndex, uint yIndex, Color color)
     {
-        if (xIndex > 8)
-        {
-            throw new ArgumentOutOfRangeException(nameof(xIndex));
-        }
+        ArgumentOutOfRangeException.ThrowIfGreaterThan(xIndex, 8u, nameof(xIndex));
 
-        if (yIndex > 8)
-        {
-            throw new ArgumentOutOfRangeException(nameof(yIndex));
-        }
+        ArgumentOutOfRangeException.ThrowIfGreaterThan(yIndex, 8u, nameof(yIndex));
 
         if (xIndex == 8 && yIndex == 0)
         {
@@ -80,7 +65,7 @@ public class LaunchpadDeviceController
 
     public async Task FlushAsync(CancellationToken cancellationToken)
     {
-        await _launchpad.WriteAsync(_queue, CancellationToken.None);
+        await launchpad.WriteAsync(_queue, CancellationToken.None);
         _queue.Clear();
     }
 

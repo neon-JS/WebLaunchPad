@@ -5,17 +5,9 @@ namespace WebLaunchPad.Communication.Devices;
 /// This can be used e.g. when working on macOS, where MIDI devices are not
 /// being represented as a file handle. (see fake_midi_socket project for this.)
 /// </summary>
-public class SocketDevice
-    : IDevice
+public class SocketDevice(string socketPath) : IDevice
 {
-    private readonly string _socketPath;
-    private readonly SemaphoreSlim _lock;
-
-    public SocketDevice(string socketPath)
-    {
-        _socketPath = socketPath;
-        _lock = new SemaphoreSlim(1);
-    }
+    private readonly SemaphoreSlim _lock = new(1);
 
     public async Task WriteAsync(
         ICollection<byte> bytes,
@@ -32,7 +24,7 @@ public class SocketDevice
         await _lock.WaitAsync(cancellationToken);
 
         using var socket = new Socket(AddressFamily.Unix, SocketType.Stream, ProtocolType.IP);
-        var endpoint = new UnixDomainSocketEndPoint(_socketPath);
+        var endpoint = new UnixDomainSocketEndPoint(socketPath);
         await socket.ConnectAsync(endpoint, cancellationToken);
 
         await socket.SendAsync(bytes.ToArray(), cancellationToken);

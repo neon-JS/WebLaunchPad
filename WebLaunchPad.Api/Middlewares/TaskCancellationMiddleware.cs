@@ -1,20 +1,13 @@
 namespace WebLaunchPad.Api.Middlewares;
 
 /// <see href="https://stackoverflow.com/a/72825700"/>
-public class TaskCancellationMiddleware
+public class TaskCancellationMiddleware(RequestDelegate next)
 {
-    private readonly RequestDelegate _next;
-
-    public TaskCancellationMiddleware(RequestDelegate next)
-    {
-        _next = next;
-    }
-
     public async Task InvokeAsync(HttpContext context)
     {
         try
         {
-            await _next(context);
+            await next(context);
         }
         catch (TaskCanceledException)
         {

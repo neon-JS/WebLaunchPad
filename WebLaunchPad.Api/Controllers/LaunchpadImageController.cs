@@ -2,8 +2,11 @@ namespace WebLaunchPad.Api.Controllers;
 
 [ApiController]
 [Route("launchpad/image")]
-public class LaunchpadImageController
-    : ControllerBase
+public class LaunchpadImageController(
+    IGifConverter gifConverter,
+    IConcurrencyService concurrencyService,
+    IDeviceController deviceController
+) : ControllerBase
 {
     private const string _GIF_CONTENT_TYPE = "image/gif";
     private const string _GIF_FILE_EXTENSION = ".gif";
@@ -13,21 +16,6 @@ public class LaunchpadImageController
         "GIF87a"u8.ToArray(),
         "GIF89a"u8.ToArray(),
     };
-
-    private readonly IGifConverter _gifConverter;
-    private readonly IConcurrencyService _concurrencyService;
-    private readonly IDeviceController _deviceController;
-
-    public LaunchpadImageController(
-        IGifConverter gifConverter,
-        IConcurrencyService concurrencyService,
-        IDeviceController deviceController
-    )
-    {
-        _gifConverter = gifConverter;
-        _concurrencyService = concurrencyService;
-        _deviceController = deviceController;
-    }
 
     [HttpPost]
     public async Task<IActionResult> ShowGifAsync(
@@ -54,12 +42,12 @@ public class LaunchpadImageController
             return BadRequest();
         }
 
-        var frames = await _gifConverter.GetFramesAsync(
+        var frames = await gifConverter.GetFramesAsync(
             content,
             cancellationToken
         );
 
-        await _concurrencyService.RunAsync(
+        await concurrencyService.RunAsync(
             async taskCancellationToken =>
             {
                 foreach (var frame in frames.ToList().RepeatForever())
@@ -71,10 +59,10 @@ public class LaunchpadImageController
 
                     foreach (var (position, color) in frame.Mapping)
                     {
-                        _deviceController.SetColor(position.X,position.Y,color);
+                        deviceController.SetColor(position.X, position.Y, color);
                     }
 
-                    await _deviceController.FlushAsync(taskCancellationToken);
+                    await deviceController.FlushAsync(taskCancellationToken);
 
                     if (frames.Count == 1)
                     {
