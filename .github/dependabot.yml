@@ -5,11 +5,27 @@
 
 version: 2
 updates:
-  - package-ecosystem: "nuget" # See documentation for possible values
-    directory: "/" # Location of package manifests
+  - package-ecosystem: "nuget"
+    directory: "/"
     schedule:
-      interval: "daily"
+      interval: "weekly"
+    groups:
+      dependencies-backend:
+        patterns:
+          - "*"
   - package-ecosystem: "cargo"
     directory: "/gif_helper"
     schedule:
-      interval: "daily"
+      interval: "weekly"
+    groups:
+      dependencies-gif-helper:
+        patterns:
+          - "*"
+  - package-ecosystem: "cargo"
+    directory: "/fake_midi_socket"
+    schedule:
+      interval: "weekly"
+    groups:
+      dependencies-fake-midi-socket:
+        patterns:
+          - "*"
